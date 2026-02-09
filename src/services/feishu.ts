@@ -141,11 +141,10 @@ export class FeishuMessenger {
    * 构建单篇文章元素
    */
   private buildArticleElement(article: Article, index: number): any {
-    // 截取摘要（前100字）
-    const summary = article.summary || article.content?.substring(0, 100) || '';
-    const truncatedSummary = summary.length > 100 ? summary.substring(0, 100) + '...' : summary;
+    // 生成一句话摘要（30-50字）
+    const shortSummary = this.generateShortSummary(article);
 
-    const content = `${index}. **[${this.escapeMarkdown(article.title)}](${article.url})**\\n${truncatedSummary ? `> ${truncatedSummary}\\n` : ''}_${this.formatTime(article.publishTime)}_`;
+    const content = `${index}. **[${this.escapeMarkdown(article.title)}](${article.url})**\\n💡 ${shortSummary}\\n_${this.formatTime(article.publishTime)}_`;
 
     return {
       tag: 'div',
@@ -154,6 +153,34 @@ export class FeishuMessenger {
         content,
       },
     };
+  }
+
+  /**
+   * 生成一句话摘要
+   */
+  private generateShortSummary(article: Article): string {
+    // 尝试从摘要或内容中提取
+    const fullText = article.summary || article.content || '';
+
+    // 移除HTML标签
+    const plainText = fullText.replace(/<[^>]*>/g, '').replace(/\n/g, ' ').trim();
+
+    // 提取第一句话（以句号、问号、感叹号或换行分隔）
+    const firstSentence = plainText.split(/[。？！\n]/)[0];
+
+    // 截取40字
+    let summary = firstSentence.length > 40 ? firstSentence.substring(0, 40) : firstSentence;
+
+    // 去除多余空格
+    summary = summary.replace(/\s+/g, ' ').trim();
+
+    // 如果为空，返回默认文本
+    if (!summary) {
+      return '点击查看详情';
+    }
+
+    // 确保不超过50字
+    return summary.length > 50 ? summary.substring(0, 50) + '...' : summary;
   }
 
   /**
