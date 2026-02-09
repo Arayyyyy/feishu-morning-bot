@@ -1,0 +1,40 @@
+{
+  "name": "feishu-morning-bot",
+  "version": "1.0.0",
+  "description": "飞书早报机器人 - 自动抓取微信公众号文章并发送到飞书群聊",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "init-config": "ts-node scripts/init-config.ts",
+    "import-config": "ts-node scripts/import-config.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "feishu",
+    "bot",
+    "wechat",
+    "rss"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@larksuiteoapi/node-sdk": "^1.58.0",
+    "@types/node": "^25.2.2",
+    "axios": "^1.13.5",
+    "better-sqlite3": "^12.6.2",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "node-cron": "^4.2.1",
+    "nodemon": "^3.1.11",
+    "rss-parser": "^3.13.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^5.0.6",
+    "@types/node-cron": "^3.0.11"
+  }
+}

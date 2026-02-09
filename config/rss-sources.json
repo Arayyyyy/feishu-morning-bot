@@ -1,0 +1,22 @@
+{
+  "rss_sources": [
+    {
+      "name": "示例RSS源 - 阮一峰的网络日志",
+      "url": "http://www.ruanyifeng.com/blog/atom.xml",
+      "enabled": true
+    },
+    {
+      "name": "示例RSS源 - 少数派",
+      "url": "https://sspai.com/feed",
+      "enabled": true
+    }
+  ],
+  "target_chats": [
+    {
+      "id": "oc_e528f0e50d53dc87e8f77ee400e657b7",
+      "name": "机器人test",
+      "type": "group",
+      "enabled": true
+    }
+  ]
+}
