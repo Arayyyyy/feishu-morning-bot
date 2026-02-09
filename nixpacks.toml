@@ -1,0 +1,5 @@
+[phases.build]
+NIXPACKS_NODE_VERSION="20"
+
+[phases.install]
+NIXPACKS_NODE_VERSION="20"

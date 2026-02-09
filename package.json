@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "飞书早报机器人 - 自动抓取微信公众号文章并发送到飞书群聊",
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=20.x"
+  },
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",
