@@ -73,7 +73,7 @@ export class FeishuMessenger {
       tag: 'div',
       text: {
         tag: 'lark_md',
-        content: '**日期**: ' + this.formatDate() + '\n**文章数**: ' + articles.length + ' 篇',
+        content: `**📅 日期**: ${this.formatDate()}\\n**📊 文章数**: ${articles.length} 篇`,
       },
     });
 
@@ -87,15 +87,14 @@ export class FeishuMessenger {
         tag: 'div',
         text: {
           tag: 'lark_md',
-          content: '**' + source + '** (' + sourceArticles.length + '篇)',
+          content: `**📰 ${source}** (${sourceArticles.length}篇)`,
         },
       });
 
       // 该来源的文章列表
       for (let i = 0; i < sourceArticles.length; i++) {
         const article = sourceArticles[i];
-        const articleElements = this.buildArticleElement(article, i + 1);
-        elements.push(...articleElements);
+        elements.push(this.buildArticleElement(article, i + 1));
 
         if (i < sourceArticles.length - 1) {
           elements.push({ tag: 'hr' });
@@ -111,7 +110,7 @@ export class FeishuMessenger {
     return {
       config: { wide_screen_mode: true },
       header: {
-        title: { tag: 'plain_text', content: '金融科技早报' },
+        title: { tag: 'plain_text', content: '💰 金融科技早报' },
         template: 'turquoise',
       },
       elements,
@@ -136,38 +135,21 @@ export class FeishuMessenger {
   }
 
   /**
-   * 构建单篇文章元素（使用多行div确保换行正确显示）
+   * 构建单篇文章元素
    */
-  private buildArticleElement(article: Article, index: number): any[] {
+  private buildArticleElement(article: Article, index: number): any {
     // 生成一句话摘要（30-50字）
     const shortSummary = this.generateShortSummary(article);
 
-    return [
-      // 标题行
-      {
-        tag: 'div',
-        text: {
-          tag: 'lark_md',
-          content: index + '. [' + this.escapeMarkdown(article.title) + '](' + article.url + ')',
-        },
+    const content = `${index}. **[${this.escapeMarkdown(article.title)}](${article.url})**\\n💡 ${shortSummary}\\n_${this.formatTime(article.publishTime)}_`;
+
+    return {
+      tag: 'div',
+      text: {
+        tag: 'lark_md',
+        content,
       },
-      // 摘要行
-      {
-        tag: 'div',
-        text: {
-          tag: 'lark_md',
-          content: shortSummary,
-        },
-      },
-      // 时间行
-      {
-        tag: 'div',
-        text: {
-          tag: 'plain_text',
-          content: '  ' + this.formatTime(article.publishTime),
-        },
-      },
-    ];
+    };
   }
 
   /**
@@ -203,12 +185,12 @@ export class FeishuMessenger {
    */
   private escapeMarkdown(text: string): string {
     return text
-      .replace(/\[/g, '\[')
-      .replace(/\]/g, '\]')
-      .replace(/\(/g, '\(')
-      .replace(/\)/g, '\)')
-      .replace(/\*/g, '\*')
-      .replace(/_/g, '\_');
+      .replace(/\[/g, '\\[')
+      .replace(/\]/g, '\\]')
+      .replace(/\(/g, '\\(')
+      .replace(/\)/g, '\\)')
+      .replace(/\*/g, '\\*')
+      .replace(/_/g, '\\_');
   }
 
   /**
@@ -222,7 +204,7 @@ export class FeishuMessenger {
     const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
     const weekday = weekdays[now.getDay()];
 
-    return year + '-' + month + '-' + day + ' ' + weekday;
+    return `${year}-${month}-${day} ${weekday}`;
   }
 
   /**
@@ -231,7 +213,7 @@ export class FeishuMessenger {
   private formatTime(date: Date): string {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return hours + ':' + minutes;
+    return `${hours}:${minutes}`;
   }
 
   /**
