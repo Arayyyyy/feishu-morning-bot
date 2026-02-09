@@ -21,6 +21,11 @@
       "enabled": true
     },
     {
+      "name": "消金界",
+      "url": "https://plink.anyfeeder.com/weixin/jjbd21",
+      "enabled": true
+    },
+    {
       "name": "InfoQ",
       "url": "https://www.infoq.cn/feed",
       "enabled": true
