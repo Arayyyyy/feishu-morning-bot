@@ -170,8 +170,20 @@ export class Scheduler {
    */
   private getRSSSources(): RSSSource[] {
     try {
+      // 先尝试从数据库读取
       const config = db.prepare('SELECT value FROM config WHERE key = ?').get('rss_sources');
-      return config ? JSON.parse((config as any).value) : [];
+      if (config) {
+        return JSON.parse((config as any).value);
+      }
+
+      // 如果数据库没有配置，从环境变量读取
+      const envConfig = process.env.RSS_SOURCES;
+      if (envConfig) {
+        console.log('从环境变量读取RSS源配置');
+        return JSON.parse(envConfig);
+      }
+
+      return [];
     } catch (error) {
       console.error('获取RSS源配置失败:', error);
       return [];
@@ -183,8 +195,20 @@ export class Scheduler {
    */
   private getTargetChats(): TargetChat[] {
     try {
+      // 先尝试从数据库读取
       const config = db.prepare('SELECT value FROM config WHERE key = ?').get('target_chats');
-      return config ? JSON.parse((config as any).value) : [];
+      if (config) {
+        return JSON.parse((config as any).value);
+      }
+
+      // 如果数据库没有配置，从环境变量读取
+      const envConfig = process.env.TARGET_CHATS;
+      if (envConfig) {
+        console.log('从环境变量读取目标群聊配置');
+        return JSON.parse(envConfig);
+      }
+
+      return [];
     } catch (error) {
       console.error('获取目标群聊配置失败:', error);
       return [];
