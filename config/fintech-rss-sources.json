@@ -11,18 +11,13 @@
       "enabled": true
     },
     {
-      "name": "未央网",
-      "url": "http://www.weiyangx.com/rss.xml",
+      "name": "钛媒体",
+      "url": "https://www.tmtpost.com/feed",
       "enabled": true
     },
     {
-      "name": "零壹财经",
-      "url": "https://www.01caijing.com/rss/",
-      "enabled": true
-    },
-    {
-      "name": "消金界",
-      "url": "https://plink.anyfeeder.com/weixin/jjbd21",
+      "name": "界面新闻",
+      "url": "https://a.jiemian.com/index.php?m=article&a=rss",
       "enabled": true
     },
     {
@@ -33,11 +28,6 @@
     {
       "name": "移动支付网",
       "url": "http://www.mpaypass.com.cn/rss/",
-      "enabled": true
-    },
-    {
-      "name": "中国电子银行网",
-      "url": "http://www.cebnet.com.cn/rss/",
       "enabled": true
     }
   ],

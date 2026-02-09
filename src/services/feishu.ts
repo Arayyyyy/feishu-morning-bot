@@ -73,7 +73,7 @@ export class FeishuMessenger {
       tag: 'div',
       text: {
         tag: 'lark_md',
-        content: `**金融科技早报** · ${this.formatDate()}\\n共 **${articles.length}** 篇文章`,
+        content: `**📅 日期**: ${this.formatDate()}\\n**📊 文章数**: ${articles.length} 篇`,
       },
     });
 
@@ -81,16 +81,13 @@ export class FeishuMessenger {
     elements.push({ tag: 'hr' });
 
     // 按来源分组展示
-    let sourceIndex = 0;
     for (const [source, sourceArticles] of Object.entries(groupedArticles)) {
-      sourceIndex++;
-
       // 来源标题
       elements.push({
         tag: 'div',
         text: {
           tag: 'lark_md',
-          content: `**${sourceIndex}. ${source}** (${sourceArticles.length}篇)`,
+          content: `**📰 ${source}** (${sourceArticles.length}篇)`,
         },
       });
 
@@ -105,7 +102,7 @@ export class FeishuMessenger {
       }
 
       // 来源之间的分隔
-      if (sourceIndex < Object.keys(groupedArticles).length) {
+      if (Object.keys(groupedArticles).length > 1) {
         elements.push({ tag: 'hr' });
       }
     }
