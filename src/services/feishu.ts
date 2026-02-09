@@ -64,6 +64,8 @@ export class FeishuMessenger {
    * 构建早报卡片
    */
   private buildMorningCard(articles: Article[]): any {
+    // 按来源分组文章
+    const groupedArticles = this.groupBySource(articles);
     const elements: any[] = [];
 
     // 标题和日期
@@ -71,37 +73,79 @@ export class FeishuMessenger {
       tag: 'div',
       text: {
         tag: 'lark_md',
-        content: `以下是今日精选文章 (**${articles.length}** 篇)\\n${this.formatDate()}`,
+        content: `**金融科技早报** · ${this.formatDate()}\\n共 **${articles.length}** 篇文章`,
       },
     });
 
     // 分隔线
     elements.push({ tag: 'hr' });
 
-    // 文章列表
-    for (const article of articles) {
-      elements.push(this.buildArticleElement(article));
-      elements.push({ tag: 'hr' });
-    }
+    // 按来源分组展示
+    let sourceIndex = 0;
+    for (const [source, sourceArticles] of Object.entries(groupedArticles)) {
+      sourceIndex++;
 
-    // 移除最后一个分隔线
-    elements.pop();
+      // 来源标题
+      elements.push({
+        tag: 'div',
+        text: {
+          tag: 'lark_md',
+          content: `**${sourceIndex}. ${source}** (${sourceArticles.length}篇)`,
+        },
+      });
+
+      // 该来源的文章列表
+      for (let i = 0; i < sourceArticles.length; i++) {
+        const article = sourceArticles[i];
+        elements.push(this.buildArticleElement(article, i + 1));
+
+        if (i < sourceArticles.length - 1) {
+          elements.push({ tag: 'hr' });
+        }
+      }
+
+      // 来源之间的分隔
+      if (sourceIndex < Object.keys(groupedArticles).length) {
+        elements.push({ tag: 'hr' });
+      }
+    }
 
     return {
       config: { wide_screen_mode: true },
       header: {
-        title: { tag: 'plain_text', content: '📰 早报摘要' },
-        template: 'blue',
+        title: { tag: 'plain_text', content: '💰 金融科技早报' },
+        template: 'turquoise',
       },
       elements,
     };
   }
 
   /**
+   * 按来源分组文章
+   */
+  private groupBySource(articles: Article[]): Record<string, Article[]> {
+    const grouped: Record<string, Article[]> = {};
+
+    for (const article of articles) {
+      const source = article.author || '未知来源';
+      if (!grouped[source]) {
+        grouped[source] = [];
+      }
+      grouped[source].push(article);
+    }
+
+    return grouped;
+  }
+
+  /**
    * 构建单篇文章元素
    */
-  private buildArticleElement(article: Article): any {
-    const content = `**[${this.escapeMarkdown(article.title)}](${article.url})**\\n_${this.escapeMarkdown(article.author)}_ · ${this.formatTime(article.publishTime)}`;
+  private buildArticleElement(article: Article, index: number): any {
+    // 截取摘要（前100字）
+    const summary = article.summary || article.content?.substring(0, 100) || '';
+    const truncatedSummary = summary.length > 100 ? summary.substring(0, 100) + '...' : summary;
+
+    const content = `${index}. **[${this.escapeMarkdown(article.title)}](${article.url})**\\n${truncatedSummary ? `> ${truncatedSummary}\\n` : ''}_${this.formatTime(article.publishTime)}_`;
 
     return {
       tag: 'div',
