@@ -179,10 +179,13 @@ export class Scheduler {
       // 如果数据库没有配置，从环境变量读取
       const envConfig = process.env.RSS_SOURCES;
       if (envConfig) {
-        console.log('从环境变量读取RSS源配置');
-        return JSON.parse(envConfig);
+        console.log('从环境变量读取RSS源配置，长度:', envConfig.length);
+        const parsed = JSON.parse(envConfig);
+        console.log('解析到RSS源数量:', parsed.length);
+        return parsed;
       }
 
+      console.log('未找到RSS源配置（数据库和环境变量都没有）');
       return [];
     } catch (error) {
       console.error('获取RSS源配置失败:', error);
@@ -204,10 +207,13 @@ export class Scheduler {
       // 如果数据库没有配置，从环境变量读取
       const envConfig = process.env.TARGET_CHATS;
       if (envConfig) {
-        console.log('从环境变量读取目标群聊配置');
-        return JSON.parse(envConfig);
+        console.log('从环境变量读取目标群聊配置，长度:', envConfig.length);
+        const parsed = JSON.parse(envConfig);
+        console.log('解析到目标群聊数量:', parsed.length);
+        return parsed;
       }
 
+      console.log('未找到目标群聊配置（数据库和环境变量都没有）');
       return [];
     } catch (error) {
       console.error('获取目标群聊配置失败:', error);
