@@ -90,37 +90,58 @@ export class Scheduler {
       return;
     }
 
-    // 2. 抓取所有文章
-    console.log(`开始从 ${sources.length} 个RSS源抓取文章...`);
-    const allArticles = await this.crawler.fetchFromMultipleSources(sources);
-
-    if (allArticles.length === 0) {
-      console.log('没有抓取到任何文章');
-      return;
-    }
-
-    // 3. 过滤新文章
-    console.log(`抓取到 ${allArticles.length} 篇文章，开始过滤...`);
-    const newArticles = this.crawler.filterNewArticles(allArticles);
-
-    if (newArticles.length === 0) {
-      console.log('没有新文章需要发送');
-      return;
-    }
-
-    console.log(`发现 ${newArticles.length} 篇新文章`);
-
-    // 4. 保存到数据库
-    const saved = this.crawler.saveArticles(newArticles);
-    console.log(`已保存 ${saved} 篇文章到数据库`);
-
-    // 5. 发送到目标群聊
+    // 2. 获取目标群聊
     const targets = this.getTargetChats();
     if (targets.length === 0) {
       console.log('没有配置目标群聊');
       return;
     }
 
+    // 3. 抓取所有文章
+    console.log(`开始从 ${sources.length} 个RSS源抓取文章...`);
+    const allArticles = await this.crawler.fetchFromMultipleSources(sources);
+
+    if (allArticles.length === 0) {
+      console.log('没有抓取到任何文章，发送无新文章通知');
+      // 发送无新文章通知
+      for (const target of targets) {
+        if (target.enabled !== false) {
+          try {
+            await this.messenger.sendMorningBrief(target.id, [], target.type || 'group');
+          } catch (error) {
+            console.error(`发送无新文章通知失败 (${target.name}):`, error);
+          }
+        }
+      }
+      return;
+    }
+
+    // 4. 过滤新文章
+    console.log(`抓取到 ${allArticles.length} 篇文章，开始过滤...`);
+    const newArticles = this.crawler.filterNewArticles(allArticles);
+
+    if (newArticles.length === 0) {
+      console.log('没有新文章需要发送，发送无新文章通知');
+      // 发送无新文章通知
+      for (const target of targets) {
+        if (target.enabled !== false) {
+          try {
+            await this.messenger.sendMorningBrief(target.id, [], target.type || 'group');
+          } catch (error) {
+            console.error(`发送无新文章通知失败 (${target.name}):`, error);
+          }
+        }
+      }
+      return;
+    }
+
+    console.log(`发现 ${newArticles.length} 篇新文章`);
+
+    // 5. 保存到数据库
+    const saved = this.crawler.saveArticles(newArticles);
+    console.log(`已保存 ${saved} 篇文章到数据库`);
+
+    // 6. 发送到目标群聊
     console.log(`开始发送到 ${targets.length} 个目标...`);
     for (const target of targets) {
       if (target.enabled !== false) {

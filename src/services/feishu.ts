@@ -31,7 +31,8 @@ export class FeishuMessenger {
    */
   async sendMorningBrief(chatId: string, articles: Article[], chatType: 'group' | 'user' = 'group'): Promise<void> {
     if (articles.length === 0) {
-      console.log(`没有文章需要发送到 ${chatId}`);
+      // 发送无新文章通知
+      await this.sendNoNewArticlesNotice(chatId, chatType);
       return;
     }
 
@@ -254,6 +255,61 @@ export class FeishuMessenger {
     });
 
     transaction(articles);
+  }
+
+  /**
+   * 发送无新文章通知卡片
+   */
+  async sendNoNewArticlesNotice(chatId: string, chatType: 'group' | 'user' = 'group'): Promise<void> {
+    const card = {
+      config: { wide_screen_mode: true },
+      header: {
+        title: { tag: 'plain_text', content: '金融科技早报' },
+        template: 'grey',
+      },
+      elements: [
+        {
+          tag: 'div',
+          text: {
+            tag: 'lark_md',
+            content: '**日期**: ' + this.formatDate(),
+          },
+        },
+        { tag: 'hr' },
+        {
+          tag: 'div',
+          text: {
+            tag: 'lark_md',
+            content: '暂时没有新文章，请稍后再查看',
+          },
+        },
+        {
+          tag: 'div',
+          text: {
+            tag: 'plain_text',
+            content: '将继续监控 RSS 源，有新文章时会及时推送',
+          },
+        },
+      ],
+    };
+
+    try {
+      const receiveIdType = chatType === 'user' ? 'open_id' : 'chat_id';
+
+      await this.client.im.message.create({
+        params: { receive_id_type: receiveIdType },
+        data: {
+          receive_id: chatId,
+          msg_type: 'interactive',
+          content: JSON.stringify(card),
+        },
+      });
+
+      console.log(`已发送无新文章通知到 ${chatId}`);
+    } catch (error) {
+      console.error(`发送无新文章通知失败 (${chatId}):`, error);
+      throw error;
+    }
   }
 
   /**
